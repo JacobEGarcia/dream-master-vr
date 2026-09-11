@@ -4,38 +4,40 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>DREAM MASTER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-  html,body{margin:0;padding:0;height:100%;background:#030207;overflow:hidden;
-    font-family:"Courier New",ui-monospace,monospace;color:#cfd2e8;
+  html,body{margin:0;padding:0;height:100%;background:#08070d;overflow:hidden;
+    font-family:'EB Garamond',Georgia,'Times New Roman',serif;color:#e6e2d8;
     -webkit-user-select:none;user-select:none;touch-action:none}
   #app{position:fixed;inset:0}
   canvas{display:block}
   .overlay{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
-    justify-content:center;text-align:center;background:radial-gradient(ellipse at 50% 40%,#0b0a18 0%,#030207 70%);
+    justify-content:center;text-align:center;background:radial-gradient(ellipse at 50% 42%,#100f1c 0%,#08070d 68%);
     z-index:10;transition:opacity .8s ease;padding:24px;box-sizing:border-box}
   .overlay.hidden{opacity:0;pointer-events:none}
-  .title{font-size:clamp(28px,6vw,64px);letter-spacing:.35em;color:#e8e4ff;
-    text-shadow:0 0 24px #7b6cff88,0 0 64px #7b6cff44;margin:0 0 8px}
-  .subtitle{font-size:clamp(11px,2vw,15px);letter-spacing:.3em;color:#8a86b8;margin-bottom:36px}
-  .caption{font-size:clamp(13px,2.2vw,17px);line-height:1.9;color:#b9bce0;max-width:620px;min-height:120px;white-space:pre-wrap}
-  .caption .dim{color:#6f6c96}
-  .prompt{margin-top:34px;font-size:clamp(12px,2vw,15px);letter-spacing:.25em;color:#e8e4ff;opacity:0;transition:opacity .5s}
+  .title{font-size:clamp(30px,5.6vw,58px);font-weight:500;letter-spacing:.22em;color:#efece2;margin:0 0 14px}
+  .subtitle{font-size:clamp(10px,1.6vw,13px);letter-spacing:.3em;text-transform:uppercase;color:#8b87a0;margin-bottom:40px}
+  .caption{font-size:clamp(15px,2.2vw,19px);line-height:1.95;color:#c9c5b8;max-width:600px;min-height:120px;white-space:pre-wrap}
+  .caption .dim{color:#79758c}
+  .prompt{margin-top:38px;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#a9a5b8;opacity:0;transition:opacity .5s}
   .prompt.show{opacity:1;animation:pulse 1.6s ease-in-out infinite}
-  @keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
-  #vrBtn{margin-top:22px;padding:14px 34px;background:transparent;border:1px solid #7b6cff;color:#cfc9ff;
-    font-family:inherit;font-size:14px;letter-spacing:.3em;cursor:pointer;display:none}
-  #vrBtn:hover{background:#7b6cff22}
-  #muteBtn{position:fixed;top:14px;right:14px;z-index:20;background:transparent;border:1px solid #44426a;
-    color:#8a86b8;font-family:inherit;font-size:11px;letter-spacing:.2em;padding:6px 12px;cursor:pointer}
+  @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+  #vrBtn{margin-top:26px;padding:12px 32px;background:transparent;border:1px solid rgba(230,226,216,.35);color:#e6e2d8;
+    font-family:inherit;font-size:12px;letter-spacing:.26em;text-transform:uppercase;cursor:pointer;display:none;transition:border-color .2s,background .2s}
+  #vrBtn:hover{border-color:rgba(230,226,216,.8);background:rgba(230,226,216,.06)}
+  #muteBtn{position:fixed;top:16px;right:16px;z-index:20;background:transparent;border:1px solid rgba(230,226,216,.18);
+    color:#8b87a0;font-family:inherit;font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:6px 12px;cursor:pointer}
   #hud{position:fixed;left:0;right:0;bottom:0;z-index:5;pointer-events:none;display:none;
-    padding:14px 18px;box-sizing:border-box}
-  #hud .row{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;letter-spacing:.22em;color:#9fa2c8}
-  #meterWrap{height:5px;background:#1a1830;margin-top:8px;border:1px solid #2c2a4a}
-  #meter{height:100%;width:25%;background:linear-gradient(90deg,#4de3c2,#e8c24d,#e34d6a);transition:width .3s}
-  #crosshair{position:fixed;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;
-    background:#e8e4ff99;z-index:5;display:none;box-shadow:0 0 8px #7b6cff}
+    padding:16px 22px;box-sizing:border-box}
+  #hud .row{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#9a96ac}
+  #meterWrap{height:3px;background:rgba(230,226,216,.12);margin-top:10px;border-radius:2px;overflow:hidden}
+  #meter{height:100%;width:25%;background:linear-gradient(90deg,#7fb8a4,#cbb46a,#c06a5e);transition:width .3s}
+  #crosshair{position:fixed;left:50%;top:50%;width:5px;height:5px;margin:-2.5px;border-radius:50%;
+    background:rgba(230,226,216,.55);z-index:5;display:none}
   #toast{position:fixed;top:18%;left:0;right:0;text-align:center;z-index:6;pointer-events:none;
-    font-size:clamp(14px,2.4vw,20px);letter-spacing:.3em;color:#e8e4ff;text-shadow:0 0 18px #7b6cff88;opacity:0;transition:opacity .6s}
+    font-size:clamp(16px,2.4vw,22px);letter-spacing:.28em;color:#efece2;opacity:0;transition:opacity .6s}
   #toast.show{opacity:1}
   #fade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:15;transition:opacity 1.4s ease}
   #fade.white{background:#eaf6ff}
